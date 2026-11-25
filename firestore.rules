@@ -1,0 +1,8 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;   // open access (no login) - fine for a private link, tighten later with Firebase Auth
+    }
+  }
+}
