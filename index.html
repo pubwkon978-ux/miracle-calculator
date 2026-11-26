@@ -754,7 +754,118 @@
 .hint{font-size:13px;margin-top:12px}
 @media (min-width:900px){.add-card .field-group input{padding:17px 14px;font-size:18px}.suggest{max-height:480px}}
 
+/* ===================== UI refresh ===================== */
+:root{ --font:"Inter","Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif; }
+body{
+  font-family:var(--font);
+  font-variant-numeric:lining-nums;
+  -webkit-font-smoothing:antialiased;
+  background:radial-gradient(1100px 560px at 50% -8%,#241d0b 0%,#121212 46%,#0a0a0a 100%) fixed;
+  padding:14px 14px 30px;
+}
+button,input,select,textarea{ font-family:inherit; }
+.line-total,.line-sub,.summary-row,.suggest small,.chip,#priceOut,.hist-total{ font-variant-numeric:lining-nums tabular-nums; }
+
+header{ border-bottom:none; padding:24px 12px 6px; margin-bottom:14px; }
+header::after{ content:""; display:block; width:72%; height:1px; margin:18px auto 0; background:linear-gradient(90deg,transparent,var(--gold-dark),transparent); }
+header .header-logo{ width:96px; }
+header h1 span{ font-size:12px; letter-spacing:6px; font-weight:500; }
+.menu-btn{ border-radius:12px; background:#181818; box-shadow:0 4px 12px rgba(0,0,0,.4); }
+.sync{ font-weight:500; }
+
+.card{
+  border-radius:16px; border:1px solid #2c2c2c;
+  background:linear-gradient(180deg,#1e1e1e,#171717);
+  box-shadow:0 10px 30px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.035);
+}
+.card.pad{ padding:18px; margin-bottom:14px; }
+.add-card{ overflow:visible; }
+
+.field-group label{ font-size:11px; font-weight:600; letter-spacing:1.2px; color:#a9a9a9; }
+.field-group input{
+  background:#101010; border:1px solid #2f2f2f; border-radius:10px;
+  transition:border-color .15s, box-shadow .15s;
+}
+.add-card .field-group input{ border-radius:10px; }
+.field-group input:focus{ border-color:var(--gold); box-shadow:0 0 0 3px rgba(212,175,55,.16); }
+
+.add-row{ grid-template-columns:90px 1fr auto; }
+.add-row.custom{ grid-template-columns:1fr auto; }
+.add-row.custom #qtyGroup{ display:none; }
+.add-btn{ border-radius:10px; font-weight:700; letter-spacing:.6px; box-shadow:0 6px 16px rgba(212,175,55,.22); }
+.hint{ font-size:13px; line-height:1.45; color:#a9a9a9; }
+
+/* item dropdown: scrollable, never clipped */
+.suggest{
+  max-height:min(46vh,340px);
+  overflow-y:auto; -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain; touch-action:pan-y;
+  background:#121212; border-radius:12px;
+  box-shadow:0 16px 36px rgba(0,0,0,.75);
+}
+.suggest div{ padding:14px; font-size:15px; align-items:center; }
+.suggest div span{ min-width:0; overflow-wrap:anywhere; }
+.suggest small{ color:var(--gold-light); font-weight:600; }
+
+.line{ padding:14px 16px; gap:12px; }
+.line-name{ font-weight:600; }
+.line-sub{ font-size:12.5px; }
+.line-total{ font-weight:700; }
+.remove-btn{ width:30px; height:30px; border-radius:8px; background:rgba(229,115,115,.1); color:#e57373; font-size:13px; padding:0; }
+.empty{ padding:30px 22px; }
+
+.summary{ border-radius:16px; background:linear-gradient(145deg,#211a07 0%,#0e0e0e 72%); box-shadow:0 10px 30px rgba(0,0,0,.45); }
+.summary-row.grand{ font-size:22px; }
+.adv-pct-wrap{ border-radius:10px; background:#101010; }
+
+.action-btn{ border-radius:12px; padding:15px; font-size:13px; font-weight:600; letter-spacing:1.2px; transition:transform .1s, filter .15s; }
+.action-btn:active{ transform:scale(.985); }
+.action-btn.primary{ box-shadow:0 8px 20px rgba(212,175,55,.2); }
+
+.drawer{ background:#111; }
+.drawer-item{ padding:16px; border-radius:14px; font-weight:500; }
+.drawer-icon-btn{ border-radius:10px; }
+
+/* ===== Item Library: centered card ===== */
+.lib-modal{ position:fixed; inset:0; z-index:950; display:none; align-items:center; justify-content:center; padding:16px; }
+.lib-modal.open{ display:flex; }
+.lib-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.72); -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px); animation:libFade .2s ease; }
+.lib-card{
+  position:relative; width:100%; max-width:480px;
+  max-height:86vh; max-height:86dvh;
+  display:flex; flex-direction:column; overflow:hidden;
+  background:linear-gradient(180deg,#1f1f1f,#151515);
+  border:1px solid var(--gold-dark); border-radius:18px;
+  box-shadow:0 24px 60px rgba(0,0,0,.7);
+  animation:libPop .22s ease;
+}
+@keyframes libFade{ from{opacity:0} to{opacity:1} }
+@keyframes libPop{ from{opacity:0;transform:translateY(12px) scale(.96)} to{opacity:1;transform:none} }
+.lib-head{ display:flex; align-items:center; gap:10px; padding:16px; border-bottom:1px solid #2c2c2c; }
+.lib-title{ flex:1; color:var(--gold-light); font-size:15px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; }
+.lib-count{ color:var(--text-dim); font-size:12px; }
+.lib-body{ flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; padding:16px; }
+.lib-form{ background:#121212; border:1px solid #2a2a2a; border-radius:14px; padding:14px; }
+.lib-row2{ display:grid; grid-template-columns:90px 1fr; gap:10px; margin:12px 0; }
+.lib-actions{ display:flex; gap:10px; }
+.lib-actions .action-btn{ padding:12px; flex:1; }
+.lib-search{ margin:16px 0 10px; }
+.lib-search input{ width:100%; background:#101010; border:1px solid #2f2f2f; border-radius:10px; color:var(--text); padding:12px; font-size:16px; outline:none; }
+.lib-search input:focus{ border-color:var(--gold); box-shadow:0 0 0 3px rgba(212,175,55,.16); }
+.lib-item{ display:flex; align-items:center; gap:10px; padding:12px 12px 12px 14px; margin-bottom:8px; background:#191919; border:1px solid #2a2a2a; border-radius:12px; }
+.lib-info{ flex:1; min-width:0; }
+.lib-name{ font-size:15px; font-weight:600; line-height:1.35; overflow-wrap:anywhere; }
+.lib-meta{ display:flex; flex-wrap:wrap; gap:6px; margin-top:7px; }
+.chip{ font-size:12px; padding:3px 9px; border-radius:999px; background:rgba(212,175,55,.12); color:var(--gold-light); border:1px solid rgba(212,175,55,.25); }
+.chip.dim{ background:#222; color:var(--text-dim); border-color:#333; }
+.lib-btns{ display:flex; gap:6px; }
+.lib-btns button{ width:38px; height:38px; border-radius:10px; border:1px solid #333; background:#202020; color:var(--gold-light); font-size:15px; cursor:pointer; }
+.lib-btns button:active{ filter:brightness(.85); }
+.lib-btns button.del{ color:#e57373; }
+.lib-empty{ text-align:center; color:var(--text-dim); padding:26px 8px; font-size:14px; line-height:1.6; }
+
 </style>
+
 </head>
 <body>
 <script>
@@ -1175,9 +1286,9 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     <div class="field-group combo"><label>Item</label>
       <input id="itemInput" type="text" placeholder="Type to search items…" autocomplete="off">
       <div id="suggest" class="suggest" hidden></div></div>
-    <div class="add-row">
-      <div class="field-group"><label>Qty</label><input id="qtyInput" type="number" min="0" step="any" value="1" inputmode="decimal"></div>
-      <div class="field-group"><label>Price (Rs.)</label><input id="priceOut" type="text" value="Rs. 0" disabled></div>
+    <div class="add-row" id="addRow">
+      <div class="field-group" id="qtyGroup"><label>Qty</label><input id="qtyInput" type="number" min="0" step="any" value="1" inputmode="decimal"></div>
+      <div class="field-group"><label id="priceLabel">Price (Rs.)</label><input id="priceOut" type="text" value="Rs. 0" disabled></div>
       <button id="addBtn" type="button" class="add-btn">+ Add</button>
     </div>
     <div id="addHint" class="hint"></div>
@@ -1217,20 +1328,34 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       <button type="button" class="drawer-item" data-go="pending" style="margin-top:10px"><span>🕒 Pending History <b id="cntPending" class="cnt"></b></span><span class="chev">&rsaquo;</span></button>
       <button type="button" class="drawer-item" data-go="complete" style="margin-top:10px"><span>✅ Complete History <b id="cntComplete" class="cnt"></b></span><span class="chev">&rsaquo;</span></button>
     </div>
-    <div id="vLibrary" class="drawer-view" hidden>
-      <div class="card pad lib-form">
-        <div class="field-group"><label>Item name</label><input id="libName" type="text" placeholder="e.g. Album 12x18"></div>
-        <div class="lib-row">
-          <div class="field-group"><label>Qty</label><input id="libQty" type="number" min="0" step="any" value="1" inputmode="decimal"></div>
-          <div class="field-group"><label>Price (Rs.)</label><input id="libPrice" type="number" min="0" step="any" placeholder="per 1" inputmode="decimal"></div>
-        </div>
-        <button id="libSave" type="button" class="action-btn primary" style="padding:10px">Save Item</button>
-        <button id="libCancel" type="button" class="action-btn preview" style="padding:8px;margin-top:8px" hidden>Cancel edit</button>
-      </div>
-      <div id="libList" style="margin-top:12px"></div>
-    </div>
     <div id="vHistory" class="drawer-view" hidden><div id="historyList"></div></div>
   </aside>
+
+  <div id="libModal" class="lib-modal" role="dialog" aria-modal="true" aria-label="Item Library">
+    <div id="libBackdrop" class="lib-backdrop"></div>
+    <div class="lib-card">
+      <div class="lib-head">
+        <span class="lib-title">📚 Item Library</span>
+        <span id="libCount" class="lib-count"></span>
+        <button id="libClose" type="button" class="drawer-icon-btn" aria-label="Close">&#x2715;</button>
+      </div>
+      <div id="libBody" class="lib-body">
+        <div class="lib-form">
+          <div class="field-group"><label>Item name</label><input id="libName" type="text" placeholder="e.g. Album 12x18" autocomplete="off"></div>
+          <div class="lib-row2">
+            <div class="field-group"><label>Qty</label><input id="libQty" type="number" min="0" step="any" value="1" inputmode="decimal"></div>
+            <div class="field-group"><label>Price (Rs.)</label><input id="libPrice" type="number" min="0" step="any" placeholder="per 1" inputmode="decimal"></div>
+          </div>
+          <div class="lib-actions">
+            <button id="libSave" type="button" class="action-btn primary">Save Item</button>
+            <button id="libCancel" type="button" class="action-btn preview" hidden>Cancel edit</button>
+          </div>
+        </div>
+        <div class="lib-search"><input id="libSearch" type="search" placeholder="Search library…" autocomplete="off"></div>
+        <div id="libList"></div>
+      </div>
+    </div>
+  </div>
 
   <div id="pvModal" class="pv-modal" role="dialog" aria-modal="true">
     <div class="pv-bar"><span class="pv-bar-title">Quotation Preview</span>
@@ -1317,12 +1442,17 @@ function pick(item) {
 const priceOut = $("priceOut");
 const isCustom = () => !selected && itemInput.value.trim() !== "";
 function updatePrice() {
-  if (isCustom()) {
-    if (priceOut.disabled) { priceOut.disabled = false; priceOut.type = "number"; priceOut.value = ""; priceOut.placeholder = "Price per 1"; }
-    const t = num(priceOut.value) * num(qtyInput.value);
-    $("addHint").textContent = "Not in library — enter the price per 1" + (t ? " (total " + formatRs(t) + ")" : "");
+  const custom = isCustom();
+  $("addRow").classList.toggle("custom", custom);
+  if (custom) {
+    if (priceOut.disabled) { priceOut.disabled = false; priceOut.type = "number"; priceOut.value = ""; priceOut.placeholder = "Enter price"; priceOut.inputMode = "decimal"; }
+    $("priceLabel").textContent = "Price (Rs.)";
+    qtyInput.value = 1;
+    const p = num(priceOut.value);
+    $("addHint").textContent = "Not in library \u2014 just enter the price, no quantity needed" + (p ? " (" + formatRs(p) + ")" : "");
   } else {
     priceOut.disabled = true; priceOut.type = "text"; priceOut.placeholder = "";
+    $("priceLabel").textContent = selected ? "Total (Rs.)" : "Price (Rs.)";
     priceOut.value = formatRs(selected ? selected.price * num(qtyInput.value) : 0);
     $("addHint").textContent = selected ? formatRs(selected.price) + " per 1" : "";
   }
@@ -1333,14 +1463,13 @@ itemInput.addEventListener("input", () => {
   const m = library.find(i => i.name.toLowerCase() === itemInput.value.trim().toLowerCase());
   selected = m || null; if (m) qtyInput.value = m.qty || 1; updatePrice(); showSuggest();
 });
-suggest.addEventListener("pointerdown", e => { const d = e.target.closest("[data-id]"); if (!d) return; e.preventDefault(); pick(library.find(i => i.id === d.dataset.id)); });
+suggest.addEventListener("click", e => { const d = e.target.closest("[data-id]"); if (!d) return; const it = library.find(i => i.id === d.dataset.id); if (it) pick(it); });
 document.addEventListener("pointerdown", e => { if (!e.target.closest(".combo")) suggest.hidden = true; });
 qtyInput.addEventListener("input", updatePrice);
-suggest.addEventListener("pointerdown", () => {});
 qtyInput.addEventListener("keydown", e => { if (e.key === "Enter") $("addBtn").click(); });
 
 $("addBtn").addEventListener("click", () => {
-  const qty = num(qtyInput.value);
+  const qty = isCustom() ? 1 : num(qtyInput.value);
   const name = selected ? selected.name : itemInput.value.trim();
   const price = selected ? selected.price : num(priceOut.value);
   if (!name) { toast("Type or select an item"); itemInput.focus(); return; }
@@ -1438,9 +1567,9 @@ window.addEventListener("resize", () => { if (pvModal.classList.contains("open")
 const drawer = $("drawer"), uiStack = [];
 function pushUi(n) { uiStack.push(n); try { history.pushState({ mp: n }, ""); } catch (e) {} }
 function requestClose() { if (uiStack.length) history.back(); }
-window.addEventListener("popstate", () => { const t = uiStack.pop(); if (t === "preview") closePreview(); else if (t === "drawer") closeDrawer(); });
+window.addEventListener("popstate", () => { const t = uiStack.pop(); if (t === "preview") closePreview(); else if (t === "drawer") closeDrawer(); else if (t === "library") closeLibrary(); });
 function showView(v) {
-  $("vMenu").hidden = v !== "menu"; $("vLibrary").hidden = v !== "library"; $("vHistory").hidden = v !== "pending" && v !== "complete";
+  $("vMenu").hidden = v !== "menu"; $("vHistory").hidden = v !== "pending" && v !== "complete";
   $("drawerBack").hidden = v === "menu";
   $("drawerTitle").textContent = { menu: "Menu", library: "Item Library", pending: "Pending History", complete: "Complete History" }[v];
   if (v === "pending" || v === "complete") { histMode = v; renderHistory(); }
@@ -1451,11 +1580,14 @@ $("menuBtn").addEventListener("click", openDrawer);
 $("drawerClose").addEventListener("click", requestClose);
 $("drawerOverlay").addEventListener("click", requestClose);
 $("drawerBack").addEventListener("click", () => showView("menu"));
-$("vMenu").addEventListener("click", e => { const b = e.target.closest("[data-go]"); if (b) showView(b.dataset.go); });
+$("vMenu").addEventListener("click", e => { const b = e.target.closest("[data-go]"); if (b) { if (b.dataset.go === "library") openLibrary(); else showView(b.dataset.go); } });
 
 /* ===== Item library ===== */
 function renderLibrary() {
-  $("libList").innerHTML = library.length ? library.map(i => `<div class="hist-item"><div class="hist-main" style="cursor:default"><div class="hist-name" style="white-space:normal">${esc(i.name)}</div><div class="hist-meta">${formatRs(i.price)} per 1 · default qty ${i.qty || 1}</div></div><div class="hist-acts"><button type="button" data-act="edit" data-id="${esc(i.id)}">✎</button><button type="button" class="del" data-act="del" data-id="${esc(i.id)}">🗑</button></div></div>`).join("") : `<div class="hist-empty">Library is empty. Add your first item above.</div>`;
+  const q = ($("libSearch").value || "").trim().toLowerCase();
+  const list = q ? library.filter(i => i.name.toLowerCase().includes(q)) : library;
+  $("libCount").textContent = library.length ? library.length + (library.length === 1 ? " item" : " items") : "";
+  $("libList").innerHTML = list.length ? list.map(i => `<div class="lib-item"><div class="lib-info"><div class="lib-name">${esc(i.name)}</div><div class="lib-meta"><span class="chip">${formatRs(i.price)} per 1</span><span class="chip dim">default qty ${i.qty || 1}</span></div></div><div class="lib-btns"><button type="button" data-act="edit" data-id="${esc(i.id)}" aria-label="Edit">✎</button><button type="button" class="del" data-act="del" data-id="${esc(i.id)}" aria-label="Delete">🗑</button></div></div>`).join("") : `<div class="lib-empty">${library.length ? "No items match your search." : "Library is empty. Add your first item above."}</div>`;
 }
 function resetLibForm() { libEditId = null; $("libName").value = ""; $("libQty").value = 1; $("libPrice").value = ""; $("libCancel").hidden = true; $("libSave").textContent = "Save Item"; }
 $("libSave").addEventListener("click", () => {
@@ -1469,7 +1601,7 @@ $("libCancel").addEventListener("click", resetLibForm);
 $("libList").addEventListener("click", e => {
   const b = e.target.closest("button[data-act]"); if (!b) return;
   const it = library.find(i => i.id === b.dataset.id); if (!it) return;
-  if (b.dataset.act === "edit") { libEditId = it.id; $("libName").value = it.name; $("libQty").value = it.qty || 1; $("libPrice").value = it.price; $("libCancel").hidden = false; $("libSave").textContent = "Update Item"; $("vLibrary").scrollTop = 0; }
+  if (b.dataset.act === "edit") { libEditId = it.id; $("libName").value = it.name; $("libQty").value = it.qty || 1; $("libPrice").value = it.price; $("libCancel").hidden = false; $("libSave").textContent = "Update Item"; $("libBody").scrollTop = 0; }
   else if (confirm("Delete \"" + it.name + "\" from the library?")) deleteDoc(doc(db, "items", it.id)).catch(syncErr);
 });
 
@@ -1530,6 +1662,19 @@ $("whatsappBtn").addEventListener("click", async () => {
     d.save(fn); toast("PDF downloaded — attach it in WhatsApp");
   } catch (e) { alert("Something went wrong generating the quotation. Please try again."); }
 });
+
+/* ===== Item library modal (centered card) ===== */
+function openLibrary() {
+  closeDrawer();
+  if (uiStack.length && uiStack[uiStack.length - 1] === "drawer") { uiStack[uiStack.length - 1] = "library"; try { history.replaceState({ mp: "library" }, ""); } catch (e) {} }
+  else pushUi("library");
+  $("libSearch").value = ""; renderLibrary();
+  $("libModal").classList.add("open"); document.body.style.overflow = "hidden"; $("libBody").scrollTop = 0;
+}
+function closeLibrary() { $("libModal").classList.remove("open"); document.body.style.overflow = ""; resetLibForm(); }
+$("libClose").addEventListener("click", requestClose);
+$("libBackdrop").addEventListener("click", requestClose);
+$("libSearch").addEventListener("input", renderLibrary);
 
 renderLines();
 
