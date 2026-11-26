@@ -1298,7 +1298,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     <div class="field-group combo"><label>Item</label>
       <input id="itemInput" type="text" placeholder="Type to search items…" autocomplete="off">
       <div id="suggest" class="suggest" hidden></div></div>
-    <label class="chk" id="withQtyRow" hidden><input type="checkbox" id="withQty"><span>With qty</span></label>
+    <label class="chk" id="withQtyRow" hidden><input type="checkbox" id="withQty"><span>Item has a quantity</span></label>
     <div class="add-row" id="addRow">
       <div class="field-group" id="qtyGroup"><label>Qty</label><input id="qtyInput" type="number" min="0" step="any" value="1" inputmode="decimal"></div>
       <div class="field-group"><label id="priceLabel">Price (Rs.)</label><input id="priceOut" type="text" value="Rs. 0" disabled></div>
@@ -1355,7 +1355,6 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       <div id="libBody" class="lib-body">
         <div class="lib-form">
           <div class="field-group"><label>Item name</label><input id="libName" type="text" placeholder="e.g. Album 12x18" autocomplete="off"></div>
-          <label class="chk"><input type="checkbox" id="libHasQty" checked><span>Item has a quantity</span></label>
           <div class="lib-row2" id="libRow2">
             <div class="field-group" id="libQtyGroup"><label>Default qty <span class="opt">(optional)</span></label><input id="libQty" type="number" min="0" step="any" value="1" inputmode="decimal"></div>
             <div class="field-group"><label>Price (Rs.) <span class="opt">(optional)</span></label><input id="libPrice" type="number" min="0" step="any" placeholder="leave empty to enter when adding" inputmode="decimal"></div>
@@ -1453,7 +1452,7 @@ function showSuggest() {
   suggest.hidden = false;
 }
 function pick(item) {
-  selected = item; itemInput.value = item.name; qtyInput.value = item.qty || 1; suggest.hidden = true; updatePrice();
+  selected = item; itemInput.value = item.name; qtyInput.value = item.qty || 1; withQty.checked = !item.noQty; suggest.hidden = true; updatePrice();
   const m = addMode();
   if (m.hasQty) { qtyInput.focus(); qtyInput.select(); } else if (m.editable) priceOut.focus(); else itemInput.blur();
 }
@@ -1462,12 +1461,12 @@ const isCustom = () => !selected && itemInput.value.trim() !== "";
 /* hasQty: show qty box, line = qty x price.  editable: price typed by hand (custom / library item without a price) */
 function addMode() {
   const custom = isCustom();
-  return { custom, hasQty: custom ? withQty.checked : (selected ? !selected.noQty : true), editable: custom ? true : (selected ? !(selected.price > 0) : false) };
+  return { custom, hasQty: (custom || selected) ? withQty.checked : true, editable: custom ? true : (selected ? !(selected.price > 0) : false) };
 }
 let priceMode = "ro";
 function updatePrice() {
   const m = addMode();
-  $("withQtyRow").hidden = !m.custom;
+  $("withQtyRow").hidden = !(m.custom || selected);
   $("addRow").classList.toggle("noqty", !m.hasQty);
   const q = m.hasQty ? num(qtyInput.value) : 1;
   if (m.editable) {
@@ -1490,7 +1489,7 @@ itemInput.addEventListener("focus", showSuggest);
 itemInput.addEventListener("input", () => {
   const m = library.find(i => i.name.toLowerCase() === itemInput.value.trim().toLowerCase());
   const was = selected; selected = m || null;
-  if (m) qtyInput.value = m.qty || 1; else if (was) qtyInput.value = 1;
+  if (m) { qtyInput.value = m.qty || 1; withQty.checked = !m.noQty; } else if (was) { qtyInput.value = 1; withQty.checked = false; }
   updatePrice(); showSuggest();
 });
 suggest.addEventListener("click", e => { const d = e.target.closest("[data-id]"); if (!d) return; const it = library.find(i => i.id === d.dataset.id); if (it) pick(it); });
@@ -1623,11 +1622,11 @@ function renderLibrary() {
   $("libCount").textContent = library.length ? library.length + (library.length === 1 ? " item" : " items") : "";
   $("libList").innerHTML = list.length ? list.map(i => `<div class="lib-item"><div class="lib-info"><div class="lib-name">${esc(i.name)}</div><div class="lib-meta">${i.price > 0 ? `<span class="chip">${formatRs(i.price)}${i.noQty ? "" : " per 1"}</span>` : `<span class="chip dim">price set when adding</span>`}<span class="chip dim">${i.noQty ? "no qty" : "default qty " + (i.qty || 1)}</span></div></div><div class="lib-btns"><button type="button" data-act="edit" data-id="${esc(i.id)}" aria-label="Edit">✎</button><button type="button" class="del" data-act="del" data-id="${esc(i.id)}" aria-label="Delete">🗑</button></div></div>`).join("") : `<div class="lib-empty">${library.length ? "No items match your search." : "Library is empty. Add your first item above."}</div>`;
 }
-function resetLibForm() { libEditId = null; $("libName").value = ""; $("libQty").value = 1; $("libPrice").value = ""; $("libHasQty").checked = true; syncLibRow(); $("libCancel").hidden = true; $("libSave").textContent = "Save Item"; }
+function resetLibForm() { libEditId = null; $("libName").value = ""; $("libQty").value = 1; $("libPrice").value = ""; $("libCancel").hidden = true; $("libSave").textContent = "Save Item"; }
 $("libSave").addEventListener("click", () => {
-  const name = $("libName").value.trim(), price = Math.max(0, num($("libPrice").value)), hasQty = $("libHasQty").checked, qty = hasQty ? (num($("libQty").value) || 1) : 1;
+  const name = $("libName").value.trim(), price = Math.max(0, num($("libPrice").value)), qty = num($("libQty").value) || 1;
   if (!name) return toast("Enter the item name");
-  const data = { name, price, qty, noQty: !hasQty };
+  const data = { name, price, qty };
   (libEditId ? setDoc(doc(db, "items", libEditId), data) : addDoc(collection(db, "items"), data)).catch(syncErr);
   toast(libEditId ? "Item updated" : "Item saved"); resetLibForm();
 });
@@ -1635,7 +1634,7 @@ $("libCancel").addEventListener("click", resetLibForm);
 $("libList").addEventListener("click", e => {
   const b = e.target.closest("button[data-act]"); if (!b) return;
   const it = library.find(i => i.id === b.dataset.id); if (!it) return;
-  if (b.dataset.act === "edit") { libEditId = it.id; $("libName").value = it.name; $("libQty").value = it.qty || 1; $("libPrice").value = it.price > 0 ? it.price : ""; $("libHasQty").checked = !it.noQty; syncLibRow(); $("libCancel").hidden = false; $("libSave").textContent = "Update Item"; $("libBody").scrollTop = 0; }
+  if (b.dataset.act === "edit") { libEditId = it.id; $("libName").value = it.name; $("libQty").value = it.qty || 1; $("libPrice").value = it.price > 0 ? it.price : ""; $("libCancel").hidden = false; $("libSave").textContent = "Update Item"; $("libBody").scrollTop = 0; }
   else if (confirm("Delete \"" + it.name + "\" from the library?")) deleteDoc(doc(db, "items", it.id)).catch(syncErr);
 });
 
@@ -1708,9 +1707,6 @@ function closeLibrary() { $("libModal").classList.remove("open"); document.body.
 $("libClose").addEventListener("click", requestClose);
 $("libBackdrop").addEventListener("click", requestClose);
 $("libSearch").addEventListener("input", renderLibrary);
-
-function syncLibRow() { $("libRow2").classList.toggle("noqty", !$("libHasQty").checked); }
-$("libHasQty").addEventListener("change", syncLibRow);
 
 /* ===== Draft: auto-saved to Firestore, same on every device ===== */
 const CLIENT_ID = Math.random().toString(36).slice(2) + Date.now().toString(36);
